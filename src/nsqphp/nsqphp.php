@@ -98,8 +98,8 @@ class nsqphp
      * 
      * @var LoopInterface
      */
-    private $loop;
-    
+    public $loop;
+
     /**
      * Wire reader
      * 
