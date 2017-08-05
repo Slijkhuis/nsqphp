@@ -23,10 +23,11 @@ use nsqphp\Message\MessageInterface;
  *
  * http://somethingsimilar.com/2012/05/21/the-opposite-of-a-bloom-filter/
  */
-class OppositeOfBloomFilter implements DedupeInterface
-{
+class OppositeOfBloomFilter implements DedupeInterface {
+
     /**
      * Deleted placeholder
+     * @var string
      */
     const DELETED = 'D';
 
@@ -40,16 +41,15 @@ class OppositeOfBloomFilter implements DedupeInterface
     /**
      * Size of hash map
      *
-     * @var integer
+     * @var int
      */
     private $size;
 
     /**
      *
-     * @param integer $size
+     * @param int $size
      */
-    public function __construct($size = 100000)
-    {
+    public function __construct($size = 100000) {
         $this->size = $size;
     }
 
@@ -65,10 +65,9 @@ class OppositeOfBloomFilter implements DedupeInterface
      * @param string $channel
      * @param MessageInterface $msg
      *
-     * @return boolean
+     * @return bool
      */
-    public function containsAndAdd($topic, $channel, MessageInterface $msg)
-    {
+    public function containsAndAdd($topic, $channel, MessageInterface $msg) {
         $hashed = $this->hash($topic, $channel, $msg);
         $this->map[$hashed['index']] = $hashed['content'];
         return $hashed['seen'];
@@ -85,8 +84,7 @@ class OppositeOfBloomFilter implements DedupeInterface
      * @param string $channel
      * @param MessageInterface $msg
      */
-    public function erase($topic, $channel, MessageInterface $msg)
-    {
+    public function erase($topic, $channel, MessageInterface $msg) {
         $hashed = $this->hash($topic, $channel, $msg);
         if ($hashed['seen']) {
             $this->map[$hashed['index']] = self::DELETED;
@@ -102,8 +100,7 @@ class OppositeOfBloomFilter implements DedupeInterface
      *
      * @return array index, content, seen (boolean)
      */
-    private function hash($topic, $channel, MessageInterface $msg)
-    {
+    private function hash($topic, $channel, MessageInterface $msg) {
         $element = "$topic:$channel:" . $msg->getPayload();
         $hash = hash('adler32', $element, TRUE);
         list(, $val) = unpack('N', $hash);

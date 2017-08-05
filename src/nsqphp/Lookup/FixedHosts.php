@@ -7,8 +7,7 @@ use nsqphp\Exception\LookupException;
 /**
  * Lookup implementation that just returns a fixed set of hosts
  */
-class FixedHosts implements LookupInterface
-{
+class FixedHosts implements LookupInterface {
     /**
      * NSQD hosts to connect to, incl. :port
      *

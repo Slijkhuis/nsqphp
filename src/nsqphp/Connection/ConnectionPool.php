@@ -2,14 +2,11 @@
 
 namespace nsqphp\Connection;
 
-use nsqphp\Exception\ConnectionException;
-use nsqphp\Exception\SocketException;
-
 /**
  * Represents a pool of connections to one or more NSQD servers
  */
-class ConnectionPool implements \Iterator, \Countable
-{
+class ConnectionPool implements \Iterator, \Countable {
+  
     /**
      * Connections
      *
@@ -22,8 +19,7 @@ class ConnectionPool implements \Iterator, \Countable
      *
      * @param ConnectionInterface $connection
      */
-    public function add(ConnectionInterface $connection)
-    {
+    public function add(ConnectionInterface $connection) {
         $this->connections[] = $connection;
     }
 
@@ -35,22 +31,20 @@ class ConnectionPool implements \Iterator, \Countable
      *
      * @param ConnectionInterface $connection
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasConnection(ConnectionInterface $connection)
-    {
+    public function hasConnection(ConnectionInterface $connection) {
         return $this->find($connection->getSocket()) ? TRUE : FALSE;
     }
 
     /**
      * Find connection from socket/host
      *
-     * @param Resource|string $socketOrHost
+     * @param resource|string $socketOrHost
      *
-     * @return ConnectionInterface|NULL Will return NULL if not found
+     * @return ConnectionInterface|null Will return NULL if not found
      */
-    public function find($socketOrHost)
-    {
+    public function find($socketOrHost) {
         foreach ($this->connections as $conn) {
             if (is_string($socketOrHost) && (string)$conn === $socketOrHost) {
                 return $conn;
@@ -66,18 +60,16 @@ class ConnectionPool implements \Iterator, \Countable
      *
      * @return string
      */
-    public function key()
-    {
+    public function key() {
         return key($this->connections);
     }
 
     /**
      * Test if current item valid
      *
-     * @return boolean
+     * @return bool
      */
-    public function valid()
-    {
+    public function valid() {
         return (current($this->connections) === FALSE) ? FALSE : TRUE;
     }
 
@@ -86,50 +78,44 @@ class ConnectionPool implements \Iterator, \Countable
      *
      * @return mixed
      */
-    public function current()
-    {
+    public function current() {
         return current($this->connections);
     }
 
     /**
      * Go to next item
      */
-    public function next()
-    {
+    public function next() {
         next($this->connections);
     }
 
     /**
      * Rewind to start
      */
-    public function rewind()
-    {
+    public function rewind() {
         reset($this->connections);
     }
 
     /**
      * Move to end
      */
-    public function end()
-    {
+    public function end() {
         end($this->connections);
     }
 
     /**
      * Get count of items
      *
-     * @return integer
+     * @return int
      */
-    public function count()
-    {
+    public function count() {
         return count($this->connections);
     }
 
     /**
      * Shuffle connections
      */
-    public function shuffle()
-    {
+    public function shuffle() {
         shuffle($this->connections);
     }
 }

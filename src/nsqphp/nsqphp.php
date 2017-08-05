@@ -2,7 +2,6 @@
 
 namespace nsqphp;
 
-use nsqphp\Exception\SocketException;
 use React\EventLoop\LoopInterface;
 use React\EventLoop\Factory as ELFactory;
 
@@ -14,40 +13,56 @@ use nsqphp\RequeueStrategy\RequeueStrategyInterface;
 use nsqphp\Message\MessageInterface;
 use nsqphp\Message\Message;
 
-class nsqphp
-{
+/**
+ * Main NSQPHP class
+ */
+class nsqphp {
+
+    /* Publish "consistency levels" [ish] */
+
     /**
-     * Publish "consistency levels" [ish]
+     * PUB_ONE
+     * @var int
      */
     const PUB_ONE = 1;
+
+    /**
+     * PUB_TWO
+     * @var int
+     */
     const PUB_TWO = 2;
+
+    /**
+     * PUB_QUORUM
+     * @var int
+     */
     const PUB_QUORUM = 5;
 
     /**
      * nsqlookupd service
      *
-     * @var LookupInterface|NULL
+     * @var LookupInterface|null
      */
     private $nsLookup;
 
     /**
      * Dedupe service
      *
-     * @var DedupeInterface|NULL
+     * @var DedupeInterface|null
      */
     private $dedupe;
 
     /**
      * Requeue strategy
      *
-     * @var RequeueStrategyInterface|NULL
+     * @var RequeueStrategyInterface|null
      */
     private $requeueStrategy;
 
     /**
      * Logger, if any enabled
      *
-     * @var LoggerInterface|NULL
+     * @var LoggerInterface|null
      */
     private $logger;
 
@@ -82,14 +97,14 @@ class nsqphp
     /**
      * Connection pool for publishing
      *
-     * @var Connection\ConnectionPool|NULL
+     * @var Connection\ConnectionPool|null
      */
     private $pubConnectionPool;
 
     /**
      * Publish success criteria (how many nodes need to respond)
      *
-     * @var integer
+     * @var int
      */
     private $pubSuccessCount;
 
@@ -131,24 +146,31 @@ class nsqphp
     /**
      * Constructor
      *
-     * @param LookupInterface|NULL $nsLookup Lookup service for hosts from topic (optional)
-     *      NB: $nsLookup service _is_ required for subscription
-     * @param DedupeInterface|NULL $dedupe Deduplication service (optional)
-     * @param RequeueStrategyInterface|NULL $requeueStrategy Our strategy
-     *      for dealing with failures whilst processing SUBbed messages via
-     *      callback - if any (optional)
-       @param LoggerInterface|NULL $logger Logging service (optional)
+     * @param LookupInterface  $nsLookup
+     * Lookup service for hosts from topic (optional)
+     * NB: $nsLookup service _is_ required for subscription
+     *
+     * @param DedupeInterface  $dedupe
+     * Deduplication service (optional)
+     *
+     * @param RequeueStrategyInterface $requeueStrategy
+     * Our strategy for dealing with failures whilst processing SUBbed messages via callback - if any (optional)
+     *
+     * @param LoggerInterface $logger
+     * Logging service (optional)
+     *
+     * @param int $connectionTimeout
+     * Connection timeout
+     *
+     * @param int $readWriteTimeout
+     * Read and write timeout
+     *
+     * @param int $readWaitTimeout
+     * Read wait timeout
+     *
      */
-    public function __construct(
-            LookupInterface $nsLookup = NULL,
-            DedupeInterface $dedupe = NULL,
-            RequeueStrategyInterface $requeueStrategy = NULL,
-            LoggerInterface $logger = NULL,
-            $connectionTimeout = 3,
-            $readWriteTimeout = 3,
-            $readWaitTimeout = 15
-            )
-    {
+    public function __construct(LookupInterface $nsLookup = NULL, DedupeInterface $dedupe = NULL, RequeueStrategyInterface $requeueStrategy = NULL, LoggerInterface $logger = NULL, $connectionTimeout = 3, $readWriteTimeout = 3, $readWaitTimeout = 15) {
+
         $this->nsLookup = $nsLookup;
         $this->dedupe = $dedupe;
         $this->requeueStrategy = $requeueStrategy;
@@ -177,16 +199,14 @@ class nsqphp
      *
      * @param \nsqphp\RequeueStrategy\RequeueStrategyInterface $requeueStrategy
      */
-    public function setRequeueStrategy(RequeueStrategyInterface $requeueStrategy = NULL)
-    {
+    public function setRequeueStrategy(RequeueStrategyInterface $requeueStrategy = NULL) {
         $this->requeueStrategy = $requeueStrategy;
     }
 
     /**
      * Destructor
      */
-    public function __destruct()
-    {
+    public function __destruct() {
         // say goodbye to each connection
         foreach ($this->subConnectionPool as $connection) {
             $connection->write($this->writer->close());
@@ -203,7 +223,7 @@ class nsqphp
      * only need to call this once to publish
      *
      * @param string|array $hosts
-     * @param integer|NULL $cl Consistency level - basically how many `nsqd`
+     * @param int|null $cl Consistency level - basically how many `nsqd`
      *      nodes we need to respond to consider a publish successful
      *      The default value is nsqphp::PUB_ONE
      *
@@ -213,8 +233,7 @@ class nsqphp
      *
      * @return nsqphp This instance for call chaining
      */
-    public function publishTo($hosts, $cl = NULL)
-    {
+    public function publishTo($hosts, $cl = NULL) {
         $this->pubConnectionPool = new Connection\ConnectionPool;
 
         if (!is_array($hosts)) {
@@ -272,8 +291,7 @@ class nsqphp
      *
      * @return nsqphp This instance for call chaining
      */
-    public function publish($topic, MessageInterface $msg)
-    {
+    public function publish($topic, MessageInterface $msg) {
         // pick a random
         $this->pubConnectionPool->shuffle();
 
@@ -312,8 +330,13 @@ class nsqphp
         return $this;
     }
 
-    public function tryFunc(Callable $func, ConnectionInterface $conn, $tries = 1)
-    {
+    /**
+     * Try callable
+     * @param  callable            $func  Callable
+     * @param  ConnectionInterface $conn  Connection
+     * @param  int                 $tries Number of tries
+     */
+    public function tryFunc(callable $func, ConnectionInterface $conn, $tries = 1) {
         $lastException = NULL;
         for ($try = 0; $try <= $tries; $try++) {
             try {
@@ -345,8 +368,7 @@ class nsqphp
      *
      * @return nsqphp This instance of call chaining
      */
-    public function subscribe($topic, $channel, $callback)
-    {
+    public function subscribe($topic, $channel, $callback) {
         if ($this->nsLookup === NULL) {
             throw new \RuntimeException(
                     'nsqphp initialised without providing lookup service (required for sub).'
@@ -400,8 +422,7 @@ class nsqphp
      *
      * @param int $timeout (default=0) timeout in seconds
      */
-    public function run($timeout = 0)
-    {
+    public function run($timeout = 0) {
         if ($timeout > 0) {
             $that = $this;
             $this->loop->addTimer($timeout, function () use ($that) {
@@ -414,21 +435,19 @@ class nsqphp
     /**
      * Stop subscribe event loop
      */
-    public function stop()
-    {
+    public function stop() {
         $this->loop->stop();
     }
 
     /**
      * Read/dispatch callback for async sub loop
      *
-     * @param Resource $socket The socket that a message is available on
+     * @param resource $socket The socket that a message is available on
      * @param string $topic The topic subscribed to that yielded this message
      * @param string $channel The channel subscribed to that yielded this message
      * @param callable $callback The callback to execute to process this message
      */
-    public function readAndDispatchMessage($socket, $topic, $channel, $callback)
-    {
+    public function readAndDispatchMessage($socket, $topic, $channel, $callback) {
         $connection = $this->subConnectionPool->find($socket);
         $frame = $this->reader->readFrame($connection);
 
@@ -498,8 +517,7 @@ class nsqphp
      *
      * @param ConnectionInterface $connection
      */
-    public function connectionCallback(ConnectionInterface $connection)
-    {
+    public function connectionCallback(ConnectionInterface $connection) {
         if ($this->logger) {
             $this->logger->info("Connecting to " . (string)$connection . " and saying hello");
         }

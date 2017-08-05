@@ -4,8 +4,11 @@ namespace nsqphp\RequeueStrategy;
 
 use nsqphp\Message\MessageInterface;
 
-interface RequeueStrategyInterface
-{
+/**
+ * Interface that needs to be implemented for a requeue strategy
+ */
+interface RequeueStrategyInterface {
+
     /**
      * Test if should requeue and with what delay
      *
@@ -14,8 +17,9 @@ interface RequeueStrategyInterface
      *
      * @param MessageInterface $msg
      *
-     * @return integer|NULL The number of milliseconds to delay for, if we
+     * @return int The number of milliseconds to delay for, if we
      *      want to retry, or NULL to drop it on the floor
      */
     public function shouldRequeue(MessageInterface $msg);
+
 }

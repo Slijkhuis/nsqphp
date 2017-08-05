@@ -2,8 +2,10 @@
 
 namespace nsqphp\Logger;
 
-interface LoggerInterface
-{
+/**
+ * Interface that can be implemented for a custom logger
+ */
+interface LoggerInterface {
     /**
      * Log error
      *

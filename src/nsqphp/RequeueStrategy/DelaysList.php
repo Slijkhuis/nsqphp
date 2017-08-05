@@ -9,12 +9,12 @@ use nsqphp\Message\MessageInterface;
  *
  * Retry all failed messages N times with delay picked from a list.
  */
-class DelaysList implements RequeueStrategyInterface
-{
+class DelaysList implements RequeueStrategyInterface {
+
     /**
      * Number of attempts to make
      *
-     * @var integer
+     * @var int
      */
     private $maxAttempts;
 
@@ -28,11 +28,10 @@ class DelaysList implements RequeueStrategyInterface
     /**
      * Constructor
      *
-     * @param integer $maxAttempts
+     * @param int $maxAttempts
      * @param array $delays
      */
-    public function __construct($maxAttempts = 10, array $delays = array('50'))
-    {
+    public function __construct($maxAttempts = 10, array $delays = array('50')) {
         $this->maxAttempts = $maxAttempts;
         $this->delays = $delays;
         if (!$this->delays) {
@@ -40,11 +39,7 @@ class DelaysList implements RequeueStrategyInterface
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function shouldRequeue(MessageInterface $msg)
-    {
+    public function shouldRequeue(MessageInterface $msg) {
         $attempts = $msg->getAttempts();
         $delay = isset($this->delays[$attempts - 1]) ?
             $this->delays[$attempts - 1] : $this->delays[count($this->delays) - 1]

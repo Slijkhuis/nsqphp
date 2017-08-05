@@ -3,29 +3,43 @@
 namespace nsqphp\Wire;
 
 use nsqphp\Connection\ConnectionInterface;
-use nsqphp\Message\Message;
 use nsqphp\Exception\SocketException;
 use nsqphp\Exception\ReadException;
-use nsqphp\Exception\ErrorFrameException;
-use nsqphp\Exception\ResponseFrameException;
 use nsqphp\Exception\UnknownFrameException;
 
-class Reader
-{
+/**
+ * Reader
+ */
+class Reader {
+    /* Frame types */
+
     /**
-     * Frame types
+     * FRAME_TYPE_RESPONSE
+     * @var int
      */
     const FRAME_TYPE_RESPONSE = 0;
+
+    /**
+     * FRAME_TYPE_ERROR
+     * @var int
+     */
     const FRAME_TYPE_ERROR = 1;
+
+    /**
+     * FRAME_TYPE_MESSAGE
+     * @var int
+     */
     const FRAME_TYPE_MESSAGE = 2;
 
     /**
      * Heartbeat response content
+     * @var string
      */
     const HEARTBEAT = '_heartbeat_';
 
     /**
      * OK response content
+     * @var string
      */
     const OK = 'OK';
 
@@ -36,10 +50,11 @@ class Reader
      *      (data size + frame type)
      * @throws ReadException If we have a problem reading the frame data
      *
+     * @param ConnectionInterface $connection Connection
+     *
      * @return array With keys: type, data
      */
-    public function readFrame(ConnectionInterface $connection)
-    {
+    public function readFrame(ConnectionInterface $connection) {
         $size = $frameType = NULL;
         try {
             $size = $this->readInt($connection);
@@ -82,13 +97,12 @@ class Reader
      * Test if frame is a response frame (optionally with content $response)
      *
      * @param array $frame
-     * @param string|NULL $response If provided we'll check for this specific
+     * @param string|null $response If provided we'll check for this specific
      *      response
      *
-     * @return boolean
+     * @return bool
      */
-    public function frameIsResponse(array $frame, $response = NULL)
-    {
+    public function frameIsResponse(array $frame, $response = NULL) {
         return isset($frame['type'], $frame['response'])
                 && $frame['type'] === self::FRAME_TYPE_RESPONSE
                 && ($response === NULL || $frame['response'] === $response);
@@ -99,10 +113,9 @@ class Reader
      *
      * @param array $frame
      *
-     * @return boolean
+     * @return bool
      */
-    public function frameIsMessage(array $frame)
-    {
+    public function frameIsMessage(array $frame) {
         return isset($frame['type'], $frame['payload'])
                 && $frame['type'] === self::FRAME_TYPE_MESSAGE;
     }
@@ -112,10 +125,9 @@ class Reader
      *
      * @param array $frame
      *
-     * @return boolean
+     * @return bool
      */
-    public function frameIsHeartbeat(array $frame)
-    {
+    public function frameIsHeartbeat(array $frame) {
         return $this->frameIsResponse($frame, self::HEARTBEAT);
     }
 
@@ -124,10 +136,9 @@ class Reader
      *
      * @param array $frame
      *
-     * @return boolean
+     * @return bool
      */
-    public function frameIsOk(array $frame)
-    {
+    public function frameIsOk(array $frame) {
         return $this->frameIsResponse($frame, self::OK);
     }
 
@@ -136,10 +147,9 @@ class Reader
      *
      * @param ConnectionInterface $connection
      *
-     * @return integer
+     * @return int
      */
-    private function readShort(ConnectionInterface $connection)
-    {
+    private function readShort(ConnectionInterface $connection) {
         list(,$res) = unpack('n', $connection->read(2));
         return $res;
     }
@@ -149,10 +159,9 @@ class Reader
      *
      * @param ConnectionInterface $connection
      *
-     * @return integer
+     * @return int
      */
-    private function readInt(ConnectionInterface $connection)
-    {
+    private function readInt(ConnectionInterface $connection) {
         list(,$res) = unpack('N', $connection->read(4));
         if ((PHP_INT_SIZE !== 4)) {
             $res = sprintf("%u", $res);
@@ -167,8 +176,7 @@ class Reader
      *
      * @return string We return as string so it works on 32 bit arch
      */
-    private function readLong(ConnectionInterface $connection)
-    {
+    private function readLong(ConnectionInterface $connection) {
         $hi = unpack('N', $connection->read(4));
         $lo = unpack('N', $connection->read(4));
 
@@ -183,12 +191,11 @@ class Reader
      * Read and unpack string; reading $size bytes
      *
      * @param ConnectionInterface $connection
-     * @param integer $size
+     * @param int $size
      *
      * @return string
      */
-    private function readString(ConnectionInterface $connection, $size)
-    {
+    private function readString(ConnectionInterface $connection, $size) {
         $temp = unpack("c{$size}chars", $connection->read($size));
         $out = "";
         foreach($temp as $v) {

@@ -2,21 +2,23 @@
 
 namespace nsqphp\Connection;
 
-interface ConnectionInterface
-{
+/**
+ * Interface that needs to be implemented by a connection 
+ */
+interface ConnectionInterface {
     /**
      * Wait for readable
      *
      * Waits for the socket to become readable (eg: have some data waiting)
      *
-     * @return boolean
+     * @return bool
      */
     public function isReadable();
 
     /**
      * Read from the socket exactly $len bytes
      *
-     * @param integer $len How many bytes to read
+     * @param int $len How many bytes to read
      *
      * @return string Binary data
     */
@@ -32,14 +34,14 @@ interface ConnectionInterface
     /**
      * Get socket handle
      *
-     * @return Resource The socket
+     * @return resource The socket
      */
     public function getSocket();
 
     /**
      * Reconnect and replace the socket resource.
      *
-     * @return Resource The socket, after reconnecting
+     * @return resource The socket, after reconnecting
      */
     public function reconnect();
 }

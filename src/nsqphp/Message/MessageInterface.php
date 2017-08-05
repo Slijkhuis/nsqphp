@@ -2,8 +2,10 @@
 
 namespace nsqphp\Message;
 
-interface MessageInterface
-{
+/**
+ * Interface that must be implemented by Message
+ */
+interface MessageInterface {
     /**
      * Get message payload
      *
@@ -14,21 +16,21 @@ interface MessageInterface
     /**
      * Get message ID
      *
-     * @return string|NULL
+     * @return string
      */
     public function getId();
 
     /**
      * Get attempts
      *
-     * @return integer|NULL
+     * @return int
      */
     public function getAttempts();
 
     /**
      * Get timestamp
      *
-     * @return float|NULL
+     * @return float
      */
     public function getTimestamp();
 }

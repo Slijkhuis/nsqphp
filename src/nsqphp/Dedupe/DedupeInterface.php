@@ -4,8 +4,11 @@ namespace nsqphp\Dedupe;
 
 use nsqphp\Message\MessageInterface;
 
-interface DedupeInterface
-{
+/**
+ * Interface that needs to be implemented for deduplication strategies
+ * @var [type]
+ */
+interface DedupeInterface {
     /**
      * Contains and add
      *
@@ -18,7 +21,7 @@ interface DedupeInterface
      * @param string $channel
      * @param MessageInterface $msg
      *
-     * @return boolean
+     * @return bool
      */
     public function containsAndAdd($topic, $channel, MessageInterface $msg);
 

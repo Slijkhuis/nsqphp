@@ -2,15 +2,17 @@
 
 namespace nsqphp\Message;
 
-class Message implements MessageInterface
-{
+/**
+ * Represents a NSQ message
+ */
+class Message implements MessageInterface {
+
     /**
      * Construct from frame
      *
      * @param array $frame
      */
-    public static function fromFrame(array $frame)
-    {
+    public static function fromFrame(array $frame) {
         return new Message(
                 $frame['payload'],
                 $frame['id'],
@@ -29,21 +31,21 @@ class Message implements MessageInterface
     /**
      * Message ID; if relevant
      *
-     * @var string|NULL
+     * @var string
      */
     private $id = NULL;
 
     /**
      * How many attempts have been made; if relevant
      *
-     * @var integer|NULL
+     * @var int
      */
     private $attempts = NULL;
 
     /**
      * Timestamp - UNIX timestamp in seconds (incl. fractions); if relevant
      *
-     * @var float|NULL
+     * @var float
      */
     private $ts = NULL;
 
@@ -51,9 +53,9 @@ class Message implements MessageInterface
      * Constructor
      *
      * @param string $data
-     * @param string|NULL $id The message ID in hex (as ASCII)
-     * @param integer|NULL $attempts How many attempts have been made on msg so far
-     * @param float|NULL $ts Timestamp (nanosecond precision, as number of seconds)
+     * @param string $id The message ID in hex (as ASCII)
+     * @param int $attempts How many attempts have been made on msg so far
+     * @param float $ts Timestamp (nanosecond precision, as number of seconds)
      */
     public function __construct($data, $id = NULL, $attempts = NULL, $ts = NULL)
     {
@@ -76,7 +78,7 @@ class Message implements MessageInterface
     /**
      * Get message ID
      *
-     * @return string|NULL
+     * @return string
      */
     public function getId()
     {
@@ -86,7 +88,7 @@ class Message implements MessageInterface
     /**
      * Get attempts
      *
-     * @return integer|NULL
+     * @return int
      */
     public function getAttempts()
     {
@@ -96,7 +98,7 @@ class Message implements MessageInterface
     /**
      * Get timestamp
      *
-     * @return float|NULL
+     * @return float
      */
     public function getTimestamp()
     {

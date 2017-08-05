@@ -2,8 +2,10 @@
 
 namespace nsqphp\Logger;
 
-class Stderr implements LoggerInterface
-{
+/**
+ * A logger that logs to STDERR
+ */
+class Stderr implements LoggerInterface {
     /**
      * Log error
      *

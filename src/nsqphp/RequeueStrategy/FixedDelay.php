@@ -9,27 +9,26 @@ use nsqphp\Message\MessageInterface;
  *
  * Retry all failed messages N times with X delay.
  */
-class FixedDelay implements RequeueStrategyInterface
-{
+class FixedDelay implements RequeueStrategyInterface {
     /**
      * Number of attempts to make
      *
-     * @var integer
+     * @var int
      */
     private $maxAttempts;
 
     /**
      * How long to delay for
      *
-     * @var integer
+     * @var int
      */
     private $delay;
 
     /**
      * Constructor
      *
-     * @param integer $maxAttempts
-     * @param integer $delay
+     * @param int $maxAttempts
+     * @param int $delay
      */
     public function __construct($maxAttempts = 10, $delay = 50)
     {
@@ -51,7 +50,7 @@ class FixedDelay implements RequeueStrategyInterface
      *
      * @param MessageInterface $msg
      *
-     * @return integer|NULL The number of milliseconds to delay for, if we
+     * @return int The number of milliseconds to delay for, if we
      *      want to retry, or NULL to drop it on the floor
      */
     public function shouldRequeue(MessageInterface $msg)

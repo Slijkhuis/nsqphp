@@ -21,10 +21,11 @@ use nsqphp\Message\MessageInterface;
  *
  * http://somethingsimilar.com/2012/05/21/the-opposite-of-a-bloom-filter/
  */
-class OppositeOfBloomFilterMemcached implements DedupeInterface
-{
+class OppositeOfBloomFilterMemcached implements DedupeInterface {
+
     /**
      * Deleted placeholder
+     * @var string
      */
     const DELETED = 'D';
 
@@ -38,18 +39,17 @@ class OppositeOfBloomFilterMemcached implements DedupeInterface
     /**
      * Size of hash map
      *
-     * @var integer
+     * @var int
      */
     private $size;
 
     /**
      *
-     * @param integer $size
+     * @param int $size
      * @param string|array $hosts Single host, many hosts with commas, or array
      *      of hosts -- which Memcached server(s) to connect to; default localhost
      */
-    public function __construct($size = 1000000, $hosts = 'localhost')
-    {
+    public function __construct($size = 1000000, $hosts = 'localhost') {
         $this->size = $size;
 
         $this->memcached = new \Memcached;
@@ -79,10 +79,9 @@ class OppositeOfBloomFilterMemcached implements DedupeInterface
      * @param string $channel
      * @param MessageInterface $msg
      *
-     * @return boolean
+     * @return bool
      */
-    public function containsAndAdd($topic, $channel, MessageInterface $msg)
-    {
+    public function containsAndAdd($topic, $channel, MessageInterface $msg) {
         $hashed = $this->hash($topic, $channel, $msg);
         $this->memcached->set($hashed['mcKey'], $hashed['content']);
         return $hashed['seen'];
@@ -99,8 +98,7 @@ class OppositeOfBloomFilterMemcached implements DedupeInterface
      * @param string $channel
      * @param MessageInterface $msg
      */
-    public function erase($topic, $channel, MessageInterface $msg)
-    {
+    public function erase($topic, $channel, MessageInterface $msg) {
         $hashed = $this->hash($topic, $channel, $msg);
         if ($hashed['seen']) {
             $this->memcached->set($hashed['mcKey'], self::DELETED);
@@ -116,8 +114,7 @@ class OppositeOfBloomFilterMemcached implements DedupeInterface
      *
      * @return array index, content, seen (boolean), mcKey
      */
-    private function hash($topic, $channel, MessageInterface $msg)
-    {
+    private function hash($topic, $channel, MessageInterface $msg) {
         $element = "$topic:$channel:" . $msg->getPayload();
         $hash = hash('adler32', $element, TRUE);
         list(, $val) = unpack('N', $hash);

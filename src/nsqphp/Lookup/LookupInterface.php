@@ -4,8 +4,10 @@ namespace nsqphp\Lookup;
 
 use nsqphp\Exception\LookupException;
 
-interface LookupInterface
-{
+/**
+ * An interface that can be implemented for looking up NSQd instances
+ */
+interface LookupInterface {
     /**
      * Lookup hosts for a given topic
      *

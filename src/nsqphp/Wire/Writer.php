@@ -2,10 +2,13 @@
 
 namespace nsqphp\Wire;
 
-class Writer
-{
+/**
+ * Writer
+ */
+class Writer {
     /**
      * "Magic" identifier - for version we support
+     * @var string
      */
     const MAGIC_V2 = "  V2";
 
@@ -14,8 +17,7 @@ class Writer
      *
      * @return string
      */
-    public function magic()
-    {
+    public function magic() {
         return self::MAGIC_V2;
     }
 
@@ -29,8 +31,7 @@ class Writer
      *
      * @return string
      */
-    public function subscribe($topic, $channel, $shortId, $longId)
-    {
+    public function subscribe($topic, $channel, $shortId, $longId) {
         return $this->command('SUB', $topic, $channel, $shortId, $longId);
     }
 
@@ -42,8 +43,7 @@ class Writer
      *
      * @return string
      */
-    public function publish($topic, $message)
-    {
+    public function publish($topic, $message) {
         // the fast pack way, but may be unsafe
         $cmd = $this->command('PUB', $topic);
         $size = pack('N', strlen($message));
@@ -59,12 +59,11 @@ class Writer
     /**
      * Ready [RDY]
      *
-     * @param integer $count
+     * @param int $count
      *
      * @return string
      */
-    public function ready($count)
-    {
+    public function ready($count) {
         return $this->command('RDY', $count);
     }
 
@@ -75,8 +74,7 @@ class Writer
      *
      * @return string
      */
-    public function finish($id)
-    {
+    public function finish($id) {
         return $this->command('FIN', $id);
     }
 
@@ -84,7 +82,7 @@ class Writer
      * Requeue [REQ]
      *
      * @param string $id
-     * @param integer $timeMs
+     * @param int $timeMs
      *
      * @return string
      */
@@ -98,8 +96,7 @@ class Writer
      *
      * @return string
      */
-    public function nop()
-    {
+    public function nop() {
         return $this->command('NOP');
     }
 
@@ -108,8 +105,7 @@ class Writer
      *
      * @return string
      */
-    public function close()
-    {
+    public function close() {
         return $this->command('CLS');
     }
 
@@ -118,8 +114,7 @@ class Writer
      *
      * @return string
      */
-    private function command()
-    {
+    private function command() {
         $args = func_get_args();
         $cmd = array_shift($args);
         return sprintf("%s %s%s", $cmd, implode(' ', $args), "\n");
@@ -132,8 +127,7 @@ class Writer
      *
      * @return string Binary packed
      */
-    private function packString($str)
-    {
+    private function packString($str) {
         $outStr = "";
         $len = strlen($str);
         for ($i = 0; $i < $len; $i++) {

@@ -17,8 +17,7 @@ class GrowingDelay extends DelaysList
      * @param float $growFactor
      * @throws \InvalidArgumentException
      */
-    public function __construct($maxAttempts = 10, $start = 50, $growFactor = 2)
-    {
+    public function __construct($maxAttempts = 10, $start = 50, $growFactor = 2) {
         $delays = array();
         $current = $start;
         for ($i = 0; $i < $maxAttempts; $i++) {

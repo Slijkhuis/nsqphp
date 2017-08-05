@@ -8,8 +8,8 @@ use nsqphp\Exception\SocketException;
 /**
  * Represents a single connection to a single NSQD server
  */
-class Connection implements ConnectionInterface
-{
+class Connection implements ConnectionInterface {
+
     /**
      * Hostname
      *
@@ -20,7 +20,7 @@ class Connection implements ConnectionInterface
     /**
      * Port number
      *
-     * @var integer
+     * @var int
      */
     private $port;
 
@@ -34,7 +34,7 @@ class Connection implements ConnectionInterface
     /**
      * Read/write timeout - in whole seconds
      *
-     * @var integer
+     * @var int
      */
     private $readWriteTimeoutSec;
 
@@ -43,14 +43,14 @@ class Connection implements ConnectionInterface
      *
      * (to be added to the whole seconds above)
      *
-     * @var integer
+     * @var int
      */
     private $readWriteTimeoutUsec;
 
     /**
      * Read wait timeout - in whole seconds
      *
-     * @var integer
+     * @var int
      */
     private $readWaitTimeoutSec;
 
@@ -59,28 +59,28 @@ class Connection implements ConnectionInterface
      *
      * (to be added to the whole seconds above)
      *
-     * @var integer
+     * @var int
      */
     private $readWaitTimeoutUsec;
 
     /**
      * Non-blocking mode?
      *
-     * @var boolean
+     * @var bool
      */
     private $nonBlocking;
 
     /**
      * Optional on-connect callback
      *
-     * @var callable|NULL
+     * @var callable
      */
     private $connectCallback;
 
     /**
      * Socket handle
      *
-     * @var Resource|NULL
+     * @var resource
      */
     private $socket = NULL;
 
@@ -88,15 +88,15 @@ class Connection implements ConnectionInterface
      * Constructor
      *
      * @param string $hostname Default localhost
-     * @param integer $port Default 4150
+     * @param int $port Default 4150
      * @param float $connectionTimeout In seconds (no need to be whole numbers)
      * @param float $readWriteTimeout Socket timeout during active read/write
      *      In seconds (no need to be whole numbers)
      * @param float $readWaitTimeout How long we'll wait for data to become
      *      available before giving up (eg; duirng SUB loop)
      *      In seconds (no need to be whole numbers)
-     * @param boolean $nonBlocking Put socket in non-blocking mode
-     * @param callable|NULL $connectCallback Optional on-connect callback (will
+     * @param bool $nonBlocking Put socket in non-blocking mode
+     * @param callable $connectCallback Optional on-connect callback (will
      *      be called whenever we establish a connection)
      */
     public function __construct(
@@ -124,7 +124,7 @@ class Connection implements ConnectionInterface
      *
      * Waits for the socket to become readable (eg: have some data waiting)
      *
-     * @return boolean
+     * @return bool
      */
     public function isReadable()
     {
@@ -136,7 +136,7 @@ class Connection implements ConnectionInterface
     /**
      * Read from the socket exactly $len bytes
      *
-     * @param integer $len How many bytes to read
+     * @param int $len How many bytes to read
      *
      * @return string Binary data
     */
@@ -168,10 +168,9 @@ class Connection implements ConnectionInterface
     /**
      * Reconnect and return the socket
      *
-     * @return Resource the socket
+     * @return resource the socket
      */
-    public function reconnect()
-    {
+    public function reconnect() {
         @fclose($this->socket);
         $this->socket = NULL;
         return $this->getSocket();
@@ -182,8 +181,7 @@ class Connection implements ConnectionInterface
      *
      * @param string $buf The data to write
      */
-    public function write($buf)
-    {
+    public function write($buf) {
         $null = NULL;
         $write = array($socket = $this->getSocket());
 
@@ -210,10 +208,9 @@ class Connection implements ConnectionInterface
     /**
      * Get socket handle
      *
-     * @return Resource The socket
+     * @return resource The socket
      */
-    public function getSocket()
-    {
+    public function getSocket() {
         if ($this->socket === NULL) {
             $this->socket = fsockopen($this->hostname, $this->port, $errNo, $errStr, $this->connectionTimeout);
             if ($this->socket === FALSE) {
@@ -238,8 +235,7 @@ class Connection implements ConnectionInterface
      *
      * @return string
      */
-    public function __toString()
-    {
+    public function __toString() {
         return "{$this->hostname}:{$this->port}";
     }
 }
