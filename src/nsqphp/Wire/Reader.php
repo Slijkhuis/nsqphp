@@ -18,12 +18,12 @@ class Reader
     const FRAME_TYPE_RESPONSE = 0;
     const FRAME_TYPE_ERROR = 1;
     const FRAME_TYPE_MESSAGE = 2;
-    
+
     /**
      * Heartbeat response content
      */
     const HEARTBEAT = '_heartbeat_';
-    
+
     /**
      * OK response content
      */
@@ -31,11 +31,11 @@ class Reader
 
     /**
      * Read frame
-     * 
+     *
      * @throws ReadException If we have a problem reading the core frame header
      *      (data size + frame type)
      * @throws ReadException If we have a problem reading the frame data
-     * 
+     *
      * @return array With keys: type, data
      */
     public function readFrame(ConnectionInterface $connection)
@@ -52,7 +52,7 @@ class Reader
             'type'  => $frameType,
             'size'  => $size
             );
-        
+
         try {
             switch ($frameType) {
                 case self::FRAME_TYPE_RESPONSE:
@@ -77,14 +77,14 @@ class Reader
 
         return $frame;
     }
-    
+
     /**
      * Test if frame is a response frame (optionally with content $response)
      *
      * @param array $frame
      * @param string|NULL $response If provided we'll check for this specific
      *      response
-     * 
+     *
      * @return boolean
      */
     public function frameIsResponse(array $frame, $response = NULL)
@@ -98,7 +98,7 @@ class Reader
      * Test if frame is a message frame
      *
      * @param array $frame
-     * 
+     *
      * @return boolean
      */
     public function frameIsMessage(array $frame)
@@ -106,12 +106,12 @@ class Reader
         return isset($frame['type'], $frame['payload'])
                 && $frame['type'] === self::FRAME_TYPE_MESSAGE;
     }
-    
+
     /**
      * Test if frame is heartbeat
-     * 
+     *
      * @param array $frame
-     * 
+     *
      * @return boolean
      */
     public function frameIsHeartbeat(array $frame)
@@ -121,21 +121,21 @@ class Reader
 
     /**
      * Test if frame is OK
-     * 
+     *
      * @param array $frame
-     * 
+     *
      * @return boolean
      */
     public function frameIsOk(array $frame)
     {
         return $this->frameIsResponse($frame, self::OK);
     }
-    
+
     /**
      * Read and unpack short integer (2 bytes) from connection
      *
      * @param ConnectionInterface $connection
-     * 
+     *
      * @return integer
      */
     private function readShort(ConnectionInterface $connection)
@@ -143,12 +143,12 @@ class Reader
         list(,$res) = unpack('n', $connection->read(2));
         return $res;
     }
-    
+
     /**
      * Read and unpack integer (4 bytes) from connection
      *
      * @param ConnectionInterface $connection
-     * 
+     *
      * @return integer
      */
     private function readInt(ConnectionInterface $connection)
@@ -164,7 +164,7 @@ class Reader
      * Read and unpack long (8 bytes) from connection
      *
      * @param ConnectionInterface $connection
-     * 
+     *
      * @return string We return as string so it works on 32 bit arch
      */
     private function readLong(ConnectionInterface $connection)
@@ -184,18 +184,18 @@ class Reader
      *
      * @param ConnectionInterface $connection
      * @param integer $size
-     * 
-     * @return string 
+     *
+     * @return string
      */
     private function readString(ConnectionInterface $connection, $size)
     {
         $temp = unpack("c{$size}chars", $connection->read($size));
-        $out = ""; 
+        $out = "";
         foreach($temp as $v) {
             if ($v > 0) {
                 $out .= chr($v);
             }
         }
-        return $out; 
+        return $out;
     }
 }

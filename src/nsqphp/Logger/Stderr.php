@@ -6,27 +6,27 @@ class Stderr implements LoggerInterface
 {
     /**
      * Log error
-     * 
+     *
      * @param string|\Exception $msg
      */
     public function error($msg)
     {
         $this->log('error', $msg);
     }
-    
+
     /**
      * Log warn
-     * 
+     *
      * @param string|\Exception $msg
      */
     public function warn($msg)
     {
         $this->log('warn', $msg);
     }
-    
+
     /**
      * Log info
-     * 
+     *
      * @param string|\Exception $msg
      */
     public function info($msg)
@@ -36,17 +36,17 @@ class Stderr implements LoggerInterface
 
     /**
      * Log debug
-     * 
+     *
      * @param string|\Exception $msg
      */
     public function debug($msg)
     {
         $this->log('debug', $msg);
     }
-    
+
     /**
      * Log
-     * 
+     *
      * @param string $level
      * @param string|\Exception $msg
      */

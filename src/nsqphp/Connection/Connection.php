@@ -12,81 +12,81 @@ class Connection implements ConnectionInterface
 {
     /**
      * Hostname
-     * 
+     *
      * @var string
      */
     private $hostname;
-    
+
     /**
      * Port number
-     * 
+     *
      * @var integer
      */
     private $port;
-    
+
     /**
      * Connection timeout - in seconds
-     * 
+     *
      * @var float
      */
     private $connectionTimeout;
-    
+
     /**
      * Read/write timeout - in whole seconds
-     * 
+     *
      * @var integer
      */
     private $readWriteTimeoutSec;
-    
+
     /**
      * Read/write timeout - in whole microseconds
-     * 
+     *
      * (to be added to the whole seconds above)
-     * 
+     *
      * @var integer
      */
     private $readWriteTimeoutUsec;
 
     /**
      * Read wait timeout - in whole seconds
-     * 
+     *
      * @var integer
      */
     private $readWaitTimeoutSec;
 
     /**
      * Read wait timeout - in whole microseconds
-     * 
+     *
      * (to be added to the whole seconds above)
-     * 
+     *
      * @var integer
      */
     private $readWaitTimeoutUsec;
-    
+
     /**
      * Non-blocking mode?
-     * 
+     *
      * @var boolean
      */
     private $nonBlocking;
-    
+
     /**
      * Optional on-connect callback
-     * 
+     *
      * @var callable|NULL
      */
     private $connectCallback;
 
     /**
      * Socket handle
-     * 
+     *
      * @var Resource|NULL
      */
     private $socket = NULL;
-    
+
     /**
      * Constructor
-     * 
+     *
      * @param string $hostname Default localhost
      * @param integer $port Default 4150
      * @param float $connectionTimeout In seconds (no need to be whole numbers)
@@ -118,12 +118,12 @@ class Connection implements ConnectionInterface
         $this->nonBlocking = (bool)$nonBlocking;
         $this->connectCallback = $connectCallback;
     }
-    
+
     /**
      * Wait for readable
-     * 
+     *
      * Waits for the socket to become readable (eg: have some data waiting)
-     * 
+     *
      * @return boolean
      */
     public function isReadable()
@@ -132,12 +132,12 @@ class Connection implements ConnectionInterface
         $readable = stream_select($read, $null, $null, $this->readWaitTimeoutSec, $this->readWaitTimeoutUsec);
         return $readable ? TRUE : FALSE;
     }
-    
+
     /**
      * Read from the socket exactly $len bytes
      *
      * @param integer $len How many bytes to read
-     * 
+     *
      * @return string Binary data
     */
     public function read($len)
@@ -206,10 +206,10 @@ class Connection implements ConnectionInterface
             }
         }
     }
-    
+
     /**
      * Get socket handle
-     * 
+     *
      * @return Resource The socket
      */
     public function getSocket()
@@ -224,7 +224,7 @@ class Connection implements ConnectionInterface
             if ($this->nonBlocking) {
                 stream_set_blocking($this->socket, 0);
             }
-            
+
             // on-connection callback
             if ($this->connectCallback !== NULL) {
                 call_user_func($this->connectCallback, $this);
@@ -232,10 +232,10 @@ class Connection implements ConnectionInterface
         }
         return $this->socket;
     }
-    
+
     /**
      * To string (for debug logging)
-     * 
+     *
      * @return string
      */
     public function __toString()

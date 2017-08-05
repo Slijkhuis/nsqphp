@@ -12,41 +12,41 @@ class ConnectionPool implements \Iterator, \Countable
 {
     /**
      * Connections
-     * 
+     *
      * @var array [] = ConnectionInterface $connection
      */
     private $connections = array();
 
     /**
      * Add connection
-     * 
+     *
      * @param ConnectionInterface $connection
      */
     public function add(ConnectionInterface $connection)
     {
         $this->connections[] = $connection;
     }
-    
+
     /**
      * Test if has connection
-     * 
+     *
      * Remember that the sockets are lazy-initialised so we can create
      * connection instances to test with without incurring a socket connection.
-     * 
+     *
      * @param ConnectionInterface $connection
-     * 
+     *
      * @return boolean
      */
     public function hasConnection(ConnectionInterface $connection)
     {
         return $this->find($connection->getSocket()) ? TRUE : FALSE;
     }
-    
+
     /**
      * Find connection from socket/host
-     * 
+     *
      * @param Resource|string $socketOrHost
-     * 
+     *
      * @return ConnectionInterface|NULL Will return NULL if not found
      */
     public function find($socketOrHost)
@@ -60,7 +60,7 @@ class ConnectionPool implements \Iterator, \Countable
         }
         return NULL;
     }
-    
+
     /**
      * Get key of current item as string
      *
@@ -124,7 +124,7 @@ class ConnectionPool implements \Iterator, \Countable
     {
         return count($this->connections);
     }
-    
+
     /**
      * Shuffle connections
      */

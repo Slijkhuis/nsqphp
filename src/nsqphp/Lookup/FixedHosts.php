@@ -11,14 +11,14 @@ class FixedHosts implements LookupInterface
 {
     /**
      * NSQD hosts to connect to, incl. :port
-     * 
+     *
      * @var array
      */
     private $hosts;
-    
+
     /**
      * Constructor
-     * 
+     *
      * @param string|array $hosts Single host:port, many host:port with commas,
      *      or an array of host:port, of nsqd servers
      */
@@ -32,15 +32,15 @@ class FixedHosts implements LookupInterface
             $this->hosts = explode(',', $hosts);
         }
     }
-    
+
     /**
      * Lookup hosts for a given topic
-     * 
+     *
      * @param string $topic
-     * 
+     *
      * @throws LookupException If we cannot talk to / get back invalid response
      *      from nsqlookupd
-     * 
+     *
      * @return array Should return array [] = host:port
      */
     public function lookupHosts($topic)
