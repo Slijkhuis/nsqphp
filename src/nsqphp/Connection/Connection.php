@@ -150,14 +150,14 @@ class Connection implements ConnectionInterface {
             if ($readable > 0) {
                 $buffer = @stream_socket_recvfrom($socket, $len);
                 if ($buffer === FALSE) {
-                    throw new SocketException("Could not read {$len} bytes from {$this->hostname}:{$this->port}");
+                    throw new SocketException("Could not read (read failed) {$len} bytes from {$this->hostname}:{$this->port}");
                 } else if ($buffer == '') {
                     throw new SocketException("Read 0 bytes from {$this->hostname}:{$this->port}");
                 }
             } else if ($readable === 0) {
                 throw new SocketException("Timed out reading {$len} bytes from {$this->hostname}:{$this->port} after {$this->readWriteTimeoutSec} seconds and {$this->readWriteTimeoutUsec} microseconds");
             } else {
-                throw new SocketException("Could not read {$len} bytes from {$this->hostname}:{$this->port}");
+                throw new SocketException("Could not read (no readable sockets) {$len} bytes from {$this->hostname}:{$this->port}");
             }
             $data .= $buffer;
             $len -= strlen($buffer);
@@ -193,14 +193,14 @@ class Connection implements ConnectionInterface {
                 // write buffer to stream
                 $written = @stream_socket_sendto($socket, $buf);
                 if ($written === -1 || $written === FALSE) {
-                    throw new SocketException("Could not write " . strlen($buf) . " bytes to {$this->hostname}:{$this->port}");
+                    throw new SocketException("Could not write (write failed) " . strlen($buf) . " bytes to {$this->hostname}:{$this->port}");
                 }
                 // determine how much of the buffer is left to write
                 $buf = substr($buf, $written);
             } else if ($writable === 0) {
                 throw new SocketException("Timed out writing " . strlen($buf) . " bytes to {$this->hostname}:{$this->port} after {$this->readWriteTimeoutSec} seconds and {$this->readWriteTimeoutUsec} microseconds");
             } else {
-                throw new SocketException("Could not write " . strlen($buf) . " bytes to {$this->hostname}:{$this->port}");
+                throw new SocketException("Could not write (no writable socket) " . strlen($buf) . " bytes to {$this->hostname}:{$this->port}");
             }
         }
     }
