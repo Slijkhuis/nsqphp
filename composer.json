@@ -1,13 +1,13 @@
 {
-    "name": "davegardnerisme/nsqphp",
+    "name": "slijkhuis/nsqphp",
     "description": "PHP client for NSQ",
     "type": "library",
     "keywords": [
         "nsq"
     ],
-    "homepage": "https://github.com/davegardnerisme/nsqphp",
+    "homepage": "https://github.com/slijkhuis/nsqphp",
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=7",
         "react/react": ">=0.2.1"
     },
     "autoload": {
